@@ -1,0 +1,11 @@
+# CMake generation dependency list for this directory.
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/01_body_from_image.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/02_whole_body_from_image.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/04_keypoints_from_images.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/05_keypoints_from_images_multi_gpu.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/06_face_from_image.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/07_hand_from_image.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/08_heatmaps_from_image.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/09_keypoints_from_heatmaps.py
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/CMakeLists.txt
+D:/1 Programming/2 HPE Code/openpose-1.7.0/examples/tutorial_api_python/openpose_python.py
