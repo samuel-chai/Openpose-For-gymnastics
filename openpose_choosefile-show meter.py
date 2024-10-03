@@ -10,6 +10,7 @@ import argparse
 from tkinter import Tk, simpledialog
 from tkinter.filedialog import askopenfilename
 import numpy as np
+import pickle
 
 
 def adjust_coordinate(coord):
@@ -108,16 +109,18 @@ def process_video(video_path):
         print(e)
         sys.exit(-1)
 
-# Select video file using a file dialog
-Tk().withdraw()
-video_path = askopenfilename(filetypes=[("Video Files", "*.mp4;*.avi")])
+# Load the video_path value from the file
+with open('output_video_path.pkl', 'rb') as f:
+    video_path = pickle.load(f)
 
 if video_path:
     ext = os.path.splitext(video_path)[1]
+    # Load the average_width value from the file
+    with open('average_width.pkl', 'rb') as f:
+        platform_ratio = pickle.load(f)
     if ext.lower() in [".avi", ".mp4"]:
         root = Tk()
         root.withdraw()
-        platform_ratio = float(simpledialog.askstring("Input", "請輸入Platform像素大小:", parent=root))
         pixel_ratio = 1.25 / platform_ratio
         process_video(video_path)
     else:

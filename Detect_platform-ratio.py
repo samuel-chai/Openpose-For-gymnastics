@@ -10,6 +10,8 @@ from models.common import DetectMultiBackend
 from utils.general import check_img_size, non_max_suppression, scale_boxes, print_args
 from utils.plots import Annotator, colors
 from utils.torch_utils import select_device
+import pickle
+
 
 def letterbox(img, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleFill=False, scaleup=True, stride=32):
     # Resize and pad image while meeting stride-multiple constraints
@@ -56,6 +58,7 @@ def select_video_file():
 def save_video_file():
     root = Tk()
     root.withdraw()  # Hide the root window
+
     file_path = filedialog.asksaveasfilename(
         title="Save video file",
         defaultextension=".mp4",
@@ -102,6 +105,22 @@ def run(weights, source, data, imgsz=640, conf_thres=0.25, iou_thres=0.45, max_d
         if not success:
             break
 
+        # Get the current frame number and total frames
+        current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
+        total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+
+        # Get the video's FPS (frames per second)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+
+        # Calculate the current time in seconds
+        current_time = current_frame / fps
+
+        # Display the current frame number and time in the bottom-left corner
+        cv2.putText(img0, f"Frame: {int(current_frame)}", (10, height - 20),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(img0, f"Time: {current_time:.2f} sec", (10, height - 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+
         # Resize and pad image while maintaining aspect ratio
         img = letterbox(img0, imgsz, stride=stride, auto=True)[0]
         img = img.transpose((2, 0, 1))  # HWC to CHW
@@ -147,6 +166,9 @@ def run(weights, source, data, imgsz=640, conf_thres=0.25, iou_thres=0.45, max_d
     if count > 0:
         average_width = total_width / count
         print(f"Average width of bounding boxes: {average_width:.2f} pixels")
+        # Save the average_width value to a file
+        with open('average_width.pkl', 'wb') as f:
+            pickle.dump(average_width, f)
     else:
         print("No bounding boxes detected.")
 
@@ -202,6 +224,11 @@ def main(opt):
     if not video_path:
         print("No video selected. Exiting...")
         return
+
+    output_path = save_video_file()
+    # Save the video_path value to a file
+    with open('output_video_path.pkl', 'wb') as f:
+        pickle.dump(output_path, f)
 
     # Run detection
     run(opt.weights, video_path, opt.data, opt.imgsz, opt.conf_thres, opt.iou_thres, opt.max_det, opt.device, opt.augment, opt.agnostic_nms, opt.half, opt.dnn)
