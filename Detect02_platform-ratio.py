@@ -87,11 +87,9 @@ def run(weights, source, data, imgsz=640, conf_thres=0.25, iou_thres=0.45, max_d
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
 
-    # Select output video file
-    output_path = save_video_file()
-    if not output_path:
-        print("No output file selected. Exiting...")
-        return
+    # Load the output_path value from the file
+    with open('output_video_path.pkl', 'rb') as f:
+        output_path = pickle.load(f)
 
     # Define the codec and create VideoWriter object
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # You can change the codec as needed
