@@ -1,5 +1,6 @@
 # 這段代碼主要是要偵測圖片中的物件，並且計算跳馬的寬比，並且將結果顯示在圖片上
 # 這段代碼是基於YOLOv5的模型，並且使用PyTorch作為後端
+
 import argparse
 import torch
 import cv2
@@ -11,6 +12,7 @@ from utils.general import check_img_size, non_max_suppression, scale_boxes, prin
 from utils.plots import Annotator, colors
 from utils.torch_utils import select_device
 import pickle
+
 
 
 def letterbox(img, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleFill=False, scaleup=True, stride=32):
@@ -102,14 +104,11 @@ def run(weights, source, data, imgsz=640, conf_thres=0.25, iou_thres=0.45, max_d
         success, img0 = cap.read()
         if not success:
             break
-
         # Get the current frame number and total frames
         current_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
         total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-
         # Get the video's FPS (frames per second)
         fps = cap.get(cv2.CAP_PROP_FPS)
-
         # Calculate the current time in seconds
         current_time = current_frame / fps
 
@@ -224,7 +223,7 @@ def main(opt):
         return
 
     output_path = save_video_file()
-    # Save the video_path value to a file
+    # Save the video_path value to a fileㄔㄇ
     with open('output_video_path.pkl', 'wb') as f:
         pickle.dump(output_path, f)
 

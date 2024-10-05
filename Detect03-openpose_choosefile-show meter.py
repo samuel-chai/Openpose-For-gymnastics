@@ -11,6 +11,9 @@ from tkinter import Tk, simpledialog
 from tkinter.filedialog import askopenfilename
 import numpy as np
 import pickle
+import pandas as pd
+from tkinter.filedialog import asksaveasfilename
+
 
 
 def adjust_coordinate(coord):
@@ -46,6 +49,10 @@ def process_video(video_path):
         # Open the video file
         cap = cv2.VideoCapture(video_path)
 
+        # Create an empty DataFrame to store the data
+        data = pd.DataFrame(columns=["Frame", "Time", "Hip_X", "Hip_Y"])
+
+        frame_count = 0
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
@@ -102,8 +109,19 @@ def process_video(video_path):
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
+            # Add the data of this frame to the DataFrame
+            time = frame_count / cap.get(cv2.CAP_PROP_FPS)  # Calculate the time of this frame
+            data = data.append({"Frame": frame_count, "Time": time, "Hip_X": hip_x, "Hip_Y": hip_y}, ignore_index=True)
+
+            frame_count += 1
         cap.release()
         cv2.destroyAllWindows()
+
+        # Write the DataFrame to an Excel file
+        root = Tk()
+        root.withdraw()  # Hide the main window
+        output_path = asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])  # Show the file dialog and get the selected file path
+        data.to_excel(output_path, index=False)
 
     except Exception as e:
         print(e)
