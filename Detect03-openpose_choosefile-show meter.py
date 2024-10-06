@@ -63,6 +63,8 @@ def process_video(video_path):
             datum.cvInputData = frame
             opWrapper.emplaceAndPop(op.VectorDatum([datum]))
 
+            hip_x = None
+            hip_y = None
             # Get the nose keypoint (index 0)
             # 在主循環中修改坐標顯示部分
             if datum.poseKeypoints is not None and len(datum.poseKeypoints) > 0:
@@ -82,21 +84,22 @@ def process_video(video_path):
                 left_wrist = datum.poseKeypoints[0][7]
 
                 # Calculate the angle between the line and the horizontal line
-                dx = left_wrist[0] - left_elbow[0]
-                dy = left_wrist[1] - left_elbow[1]
+                dx = left_elbow[0] - left_wrist[0]
+                dy = left_elbow[1] - left_wrist[1]
 
                 if dx > 0 and dy >= 0:
                     angle = np.arctan(dy / dx)
                 elif dx < 0 and dy >= 0:
                     angle = np.pi - np.arctan(dy / -dx)
                 elif dx < 0 and dy < 0:
-                    angle = np.pi + np.arctan(dy / dx)
+                    angle = 0
                 elif dx > 0 and dy < 0:
-                    angle = 2 * np.pi - np.arctan(-dy / dx)
+                    angle = 0
                 else:
                     angle = 0
 
                 angle = np.degrees(angle)  # Convert to degrees
+                angle = np.abs(angle)  # Ensure the angle is between 0 and 180
 
                 # 在畫面上顯示調整後的坐標
                 cv2.putText(frame, f"Nose: ({nose_x:.2f}, {nose_y:.2f})", (10, 70),
