@@ -49,8 +49,10 @@ def process_video(video_path):
         # Open the video file
         cap = cv2.VideoCapture(video_path)
 
+
+
         # Create an empty DataFrame to store the data
-        data = pd.DataFrame(columns=["Frame", "Time", "Hip_X", "Hip_Y"])
+        data = pd.DataFrame(columns=["Frame", "Time", "Hip_X", "Hip_Y", "Angle"])
 
         frame_count = 0
         while cap.isOpened():
@@ -63,6 +65,7 @@ def process_video(video_path):
             datum.cvInputData = frame
             opWrapper.emplaceAndPop(op.VectorDatum([datum]))
 
+            angle = None
             hip_x = None
             hip_y = None
             # Get the nose keypoint (index 0)
@@ -88,13 +91,13 @@ def process_video(video_path):
                 dy = left_elbow[1] - left_wrist[1]
 
                 if dx > 0 and dy >= 0:
-                    angle = np.arctan(dy / dx)
+                    angle = 0
                 elif dx < 0 and dy >= 0:
-                    angle = np.pi - np.arctan(dy / -dx)
+                    angle = 0
                 elif dx < 0 and dy < 0:
-                    angle = 0
+                    angle = np.pi - np.arctan(dy / -dx)
                 elif dx > 0 and dy < 0:
-                    angle = 0
+                    angle = np.arctan(dy / dx)
                 else:
                     angle = 0
 
@@ -125,7 +128,8 @@ def process_video(video_path):
 
             # Add the data of this frame to the DataFrame
             time = frame_count / cap.get(cv2.CAP_PROP_FPS)  # Calculate the time of this frame
-            data = data.append({"Frame": frame_count, "Time": time, "Hip_X": hip_x, "Hip_Y": hip_y}, ignore_index=True)
+            data = data.append({"Frame": frame_count, "Time": time, "Hip_X": hip_x, "Hip_Y": hip_y, "Angle": angle},
+                                ignore_index=True)
 
             frame_count += 1
         cap.release()
