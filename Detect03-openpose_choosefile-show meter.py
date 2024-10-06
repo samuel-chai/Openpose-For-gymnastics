@@ -49,7 +49,19 @@ def process_video(video_path):
         # Open the video file
         cap = cv2.VideoCapture(video_path)
 
+        # Ask the user for the output file path
+        root = Tk()
+        root.withdraw()  # Hide the main window
+        output_video_path = filedialog.asksaveasfilename(defaultextension=".avi", filetypes=[
+            ("AVI Files", "*.avi")])  # Show the file dialog and get the selected file path
+        if not output_video_path:
+            print("Save operation cancelled.")
+            sys.exit(-1)
 
+        # Create a VideoWriter object
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter(output_video_path, fourcc, cap.get(cv2.CAP_PROP_FPS),
+                              (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 
         # Create an empty DataFrame to store the data
         data = pd.DataFrame(columns=["Frame", "Time", "Hip_X", "Hip_Y", "Angle"])
@@ -125,6 +137,9 @@ def process_video(video_path):
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+
+            # Write the frame to the output video
+            out.write(frame)
 
             # Add the data of this frame to the DataFrame
             time = frame_count / cap.get(cv2.CAP_PROP_FPS)  # Calculate the time of this frame
