@@ -13,7 +13,7 @@ import numpy as np
 import pickle
 import pandas as pd
 from tkinter.filedialog import asksaveasfilename
-
+from tkinter import filedialog
 
 
 def adjust_coordinate(coord):
@@ -84,7 +84,18 @@ def process_video(video_path):
                 # Calculate the angle between the line and the horizontal line
                 dx = left_wrist[0] - left_elbow[0]
                 dy = left_wrist[1] - left_elbow[1]
-                angle = np.arctan2(dy, dx)  # This returns radians
+
+                if dx > 0 and dy >= 0:
+                    angle = np.arctan(dy / dx)
+                elif dx < 0 and dy >= 0:
+                    angle = np.pi - np.arctan(dy / -dx)
+                elif dx < 0 and dy < 0:
+                    angle = np.pi + np.arctan(dy / dx)
+                elif dx > 0 and dy < 0:
+                    angle = 2 * np.pi - np.arctan(-dy / dx)
+                else:
+                    angle = 0
+
                 angle = np.degrees(angle)  # Convert to degrees
 
                 # 在畫面上顯示調整後的坐標
@@ -120,8 +131,11 @@ def process_video(video_path):
         # Write the DataFrame to an Excel file
         root = Tk()
         root.withdraw()  # Hide the main window
-        output_path = asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])  # Show the file dialog and get the selected file path
-        data.to_excel(output_path, index=False)
+        output_path = filedialog.asksaveasfilename(defaultextension=".xlsx", filetypes=[("Excel Files", "*.xlsx")])  # Show the file dialog and get the selected file path
+        if output_path:
+            data.to_excel(output_path, index=False)
+        else:
+            print("Save operation cancelled.")
 
     except Exception as e:
         print(e)
